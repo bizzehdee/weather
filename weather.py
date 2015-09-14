@@ -11,6 +11,7 @@ import datetime
 import time
 import random
 import sys
+from datetime import date
 
 WEATHER_CSV_URL = "http://www.wunderground.com/history/airport/%s/%04d/%02d/%02d/DailyHistory.html?format=1"
 
@@ -39,5 +40,14 @@ for x in range(0, argc):
 if os.path.exists(airport_file):
 	print(airport)
 
+adateFrom = date(dateFrom.tm_year, dateFrom.tm_mon, dateFrom.tm_mday)
+adateTo = date(dateTo.tm_year, dateTo.tm_mon, dateTo.tm_mday)
+
 for airportCode in airportCodes:
-	print(airportCode)
+	print("Beginning scrape of " + airportCode)
+
+	d = adateFrom
+	delta = datetime.timedelta(days=1)
+	while d <= adateTo:
+		print d
+		d += delta
