@@ -49,5 +49,9 @@ for airportCode in airportCodes:
 	d = adateFrom
 	delta = datetime.timedelta(days=1)
 	while d <= adateTo:
-		print d
+
+		print "http://www.wunderground.com/history/airport/" + airportCode  + "/" + str(d.year)  + "/" + str(d.month) + "/" + str(d.day) + "/DailyHistory.html?format=1"		
+
+#		print d.year
+#		print(WEATHER_CSV_URL % (airportCode, usableDate.year, usableDate.month, usableDate.day))
 		d += delta
