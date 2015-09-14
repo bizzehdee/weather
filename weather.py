@@ -6,14 +6,23 @@
 #
 ################################################################
 
-import os
+import os, errno
 import datetime
 import time
 import random
 import sys
+import urllib2
 from datetime import date
 
-WEATHER_CSV_URL = "http://www.wunderground.com/history/airport/%s/%04d/%02d/%02d/DailyHistory.html?format=1"
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc: # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
+
 
 if not os.path.exists("weather"):
 	raise Exception("weather dir missing")
@@ -50,8 +59,19 @@ for airportCode in airportCodes:
 	delta = datetime.timedelta(days=1)
 	while d <= adateTo:
 
-		print "http://www.wunderground.com/history/airport/" + airportCode  + "/" + str(d.year)  + "/" + str(d.month) + "/" + str(d.day) + "/DailyHistory.html?format=1"		
+		url = "http://www.wunderground.com/history/airport/" + airportCode  + "/" + str(d.year)  + "/" + str(d.month) + "/" + str(d.day) + "/DailyHistory.html?format=1"
+		outputFolder = "weather/" + airportCode
+		outputFile = outputFolder + "/" + str(d.year)  + "-" + str(d.month) + "-" + str(d.day) + ".csv"
+		print("Writing to " + outputFile)
 
-#		print d.year
-#		print(WEATHER_CSV_URL % (airportCode, usableDate.year, usableDate.month, usableDate.day))
+		mkdir_p(outputFolder)
+
+		response = urllib2.urlopen(url)
+		csv = response.read()
+		
+		f = open(outputFile, 'w')
+		f.write(csv)
+		f.close()
+		
 		d += delta
+
