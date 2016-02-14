@@ -31,7 +31,7 @@ argc = len(sys.argv)
 
 dateFrom = time.localtime(time.time())
 dateTo = time.localtime(time.time())
-airport_file = ""
+airport_file = "airports.txt"
 airportCodes = []
 
 for x in range(0, argc):
@@ -47,7 +47,8 @@ for x in range(0, argc):
 		airportCodes.append(sys.argv[x+1])
 
 if os.path.exists(airport_file):
-	print(airport)
+	#airports file should be a plain txt file with 1 airport code per line only
+	airportCodes = [line.rstrip('\n') for line in open(airport_file)]
 
 adateFrom = date(dateFrom.tm_year, dateFrom.tm_mon, dateFrom.tm_mday)
 adateTo = date(dateTo.tm_year, dateTo.tm_mon, dateTo.tm_mday)
@@ -65,9 +66,12 @@ for airportCode in airportCodes:
 		print("Writing to " + outputFile)
 
 		mkdir_p(outputFolder)
-
-		response = urllib2.urlopen(url)
+		
+		opener = urllib2.build_opener()
+		opener.addheaders.append(('Cookie', 'Prefs=SHOWMETAR:1'))
+		response = opener.open(url)
 		csv = response.read()
+		csv = csv.replace("<br />", "")
 		
 		f = open(outputFile, 'w')
 		f.write(csv)
