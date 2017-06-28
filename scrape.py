@@ -35,6 +35,9 @@ def worker(n,lock):
 			response = urllib.request.urlopen(url)
 			csv = response.read().decode(response.headers.get_content_charset())
 
+			if "No daily or hourly history data available" in csv:
+				continue
+
 			csv = csv.replace("<br />", "")
 			
 			f = open(outputFile, 'w')
@@ -89,3 +92,7 @@ for i in range(threadCount):
 	t = threading.Thread(target=worker,args=(i,lock,))
 	threads.append(t)
 	t.start()
+
+
+for i in range(threadCount):
+	threads[i].join()
